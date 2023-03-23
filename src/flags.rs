@@ -1,20 +1,15 @@
 pub mod blocks;
 pub mod color;
 pub mod date;
-pub mod dereference;
 pub mod display;
 pub mod header;
 pub mod hyperlink;
 pub mod icons;
 pub mod ignore_globs;
-pub mod indicators;
 pub mod layout;
-pub mod permission;
 pub mod recursion;
 pub mod size;
 pub mod sorting;
-pub mod symlink_arrow;
-pub mod symlinks;
 pub mod total_size;
 
 pub use blocks::Block;
@@ -22,7 +17,6 @@ pub use blocks::Blocks;
 pub use color::Color;
 pub use color::{ColorOption, ThemeOption};
 pub use date::DateFlag;
-pub use dereference::Dereference;
 pub use display::Display;
 pub use header::Header;
 pub use hyperlink::HyperlinkOption;
@@ -31,17 +25,13 @@ pub use icons::IconSeparator;
 pub use icons::IconTheme;
 pub use icons::Icons;
 pub use ignore_globs::IgnoreGlobs;
-pub use indicators::Indicators;
 pub use layout::Layout;
-pub use permission::PermissionFlag;
 pub use recursion::Recursion;
 pub use size::SizeFlag;
 pub use sorting::DirGrouping;
 pub use sorting::SortColumn;
 pub use sorting::SortOrder;
 pub use sorting::Sorting;
-pub use symlink_arrow::SymlinkArrow;
-pub use symlinks::NoSymlink;
 pub use total_size::TotalSize;
 
 use crate::app::Cli;
@@ -58,19 +48,14 @@ pub struct Flags {
     pub blocks: Blocks,
     pub color: Color,
     pub date: DateFlag,
-    pub dereference: Dereference,
     pub display: Display,
-    pub display_indicators: Indicators,
     pub icons: Icons,
     pub ignore_globs: IgnoreGlobs,
     pub layout: Layout,
-    pub no_symlink: NoSymlink,
     pub recursion: Recursion,
     pub size: SizeFlag,
-    pub permission: PermissionFlag,
     pub sorting: Sorting,
     pub total_size: TotalSize,
-    pub symlink_arrow: SymlinkArrow,
     pub hyperlink: HyperlinkOption,
     pub header: Header,
     pub should_quote: bool,
@@ -88,19 +73,14 @@ impl Flags {
             blocks: Blocks::configure_from(cli, config),
             color: Color::configure_from(cli, config),
             date: DateFlag::configure_from(cli, config),
-            dereference: Dereference::configure_from(cli, config),
             display: Display::configure_from(cli, config),
             layout: Layout::configure_from(cli, config),
             size: SizeFlag::configure_from(cli, config),
-            permission: PermissionFlag::configure_from(cli, config),
-            display_indicators: Indicators::configure_from(cli, config),
             icons: Icons::configure_from(cli, config),
             ignore_globs: IgnoreGlobs::configure_from(cli, config)?,
-            no_symlink: NoSymlink::configure_from(cli, config),
             recursion: Recursion::configure_from(cli, config),
             sorting: Sorting::configure_from(cli, config),
             total_size: TotalSize::configure_from(cli, config),
-            symlink_arrow: SymlinkArrow::configure_from(cli, config),
             hyperlink: HyperlinkOption::configure_from(cli, config),
             header: Header::configure_from(cli, config),
             should_quote: true,

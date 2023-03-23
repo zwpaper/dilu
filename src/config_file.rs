@@ -1,7 +1,6 @@
 use crate::flags::display::Display;
 use crate::flags::icons::{IconOption, IconTheme};
 use crate::flags::layout::Layout;
-use crate::flags::permission::PermissionFlag;
 use crate::flags::size::SizeFlag;
 use crate::flags::sorting::{DirGrouping, SortColumn};
 use crate::flags::HyperlinkOption;
@@ -30,19 +29,14 @@ pub struct Config {
     pub blocks: Option<Vec<String>>,
     pub color: Option<Color>,
     pub date: Option<String>,
-    pub dereference: Option<bool>,
     pub display: Option<Display>,
     pub icons: Option<Icons>,
     pub ignore_globs: Option<Vec<String>>,
-    pub indicators: Option<bool>,
     pub layout: Option<Layout>,
     pub recursion: Option<Recursion>,
     pub size: Option<SizeFlag>,
-    pub permission: Option<PermissionFlag>,
     pub sorting: Option<Sorting>,
-    pub no_symlink: Option<bool>,
     pub total_size: Option<bool>,
-    pub symlink_arrow: Option<String>,
     pub hyperlink: Option<HyperlinkOption>,
     pub header: Option<bool>,
 }
@@ -82,19 +76,14 @@ impl Config {
             blocks: None,
             color: None,
             date: None,
-            dereference: None,
             display: None,
             icons: None,
             ignore_globs: None,
-            indicators: None,
             layout: None,
             recursion: None,
             size: None,
-            permission: None,
             sorting: None,
-            no_symlink: None,
             total_size: None,
-            symlink_arrow: None,
             hyperlink: None,
             header: None,
         }
