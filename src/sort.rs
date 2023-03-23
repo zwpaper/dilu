@@ -1,5 +1,6 @@
 use crate::dal::Meta;
 use crate::flags::{DirGrouping, Flags, SortColumn, SortOrder};
+use crate::meta::FileType;
 use human_sort::compare;
 use std::cmp::Ordering;
 
@@ -44,7 +45,7 @@ pub fn by_meta(sorters: &[(SortOrder, SortFn)], a: &Meta, b: &Meta) -> Ordering 
 }
 
 fn with_dirs_first(a: &Meta, b: &Meta) -> Ordering {
-    b.file_type().is_dirlike().cmp(&a.file_type().is_dirlike())
+    matches!(b.file_type(), FileType::Directory).cmp(&matches!(a.file_type(), FileType::Directory))
 }
 
 fn by_size(a: &Meta, b: &Meta) -> Ordering {

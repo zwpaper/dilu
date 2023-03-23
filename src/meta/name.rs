@@ -172,9 +172,7 @@ impl Name {
         };
 
         let elem = match self.file_type {
-            FileType::CharDevice => Elem::CharDevice,
             FileType::Directory => Elem::Dir { uid: false },
-            FileType::SymLink { .. } => Elem::SymLink,
             FileType::File => Elem::File {
                 exec: false,
                 uid: false,

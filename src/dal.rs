@@ -3,18 +3,15 @@ use crate::meta::date::Date;
 use crate::meta::filetype::FileType;
 use crate::meta::name::Name;
 use crate::meta::size::Size;
-use crate::{print_error, ExitCode};
 
 use std::io::{self, Error, ErrorKind};
-use std::path::{Component, Path, PathBuf};
+use std::path::Path;
 use std::time::SystemTime;
 
 use futures::TryStreamExt;
 
 use opendal::layers::RetryLayer;
 use opendal::Entry;
-use opendal::EntryMode;
-use opendal::Metakey;
 use opendal::Operator;
 use opendal::{services, Metadata};
 

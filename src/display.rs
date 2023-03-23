@@ -82,11 +82,7 @@ fn inner_display_grid(
     // print the files first.
     for meta in metas {
         // Maybe skip showing the directory meta now; show its contents later.
-        if skip_dirs
-            && (matches!(meta.file_type(), FileType::Directory { .. })
-                || (matches!(meta.file_type(), FileType::SymLink { is_dir: true })
-                    && flags.layout != Layout::OneLine))
-        {
+        if skip_dirs && matches!(meta.file_type(), FileType::Directory { .. }) {
             continue;
         }
 
@@ -265,11 +261,7 @@ fn should_display_folder_path(depth: usize, metas: &[Meta], flags: &Flags) -> bo
     } else {
         let folder_number = metas
             .iter()
-            .filter(|x| {
-                matches!(x.file_type(), FileType::Directory)
-                    || (matches!(x.file_type(), FileType::SymLink { is_dir: true })
-                        && flags.layout != Layout::OneLine)
-            })
+            .filter(|x| matches!(x.file_type(), FileType::Directory))
             .count();
 
         folder_number > 1 || folder_number < metas.len()

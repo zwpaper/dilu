@@ -4,14 +4,8 @@ use std::fs::Metadata;
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
 #[cfg_attr(windows, allow(dead_code))]
 pub enum FileType {
-    BlockDevice,
-    CharDevice,
     Directory,
     File,
-    SymLink { is_dir: bool },
-    Pipe,
-    Socket,
-    Special,
 }
 
 impl FileType {
@@ -20,29 +14,12 @@ impl FileType {
 
     #[cfg(unix)]
     pub fn new(meta: &Metadata, symlink_meta: Option<&Metadata>) -> Self {
-        use std::os::unix::fs::FileTypeExt;
-
         let file_type = meta.file_type();
 
-        if file_type.is_file() {
-            FileType::File
-        } else if file_type.is_dir() {
+        if file_type.is_dir() {
             FileType::Directory
-        } else if file_type.is_fifo() {
-            FileType::Pipe
-        } else if file_type.is_symlink() {
-            FileType::SymLink {
-                // if broken, defaults to false
-                is_dir: symlink_meta.map(|m| m.is_dir()).unwrap_or_default(),
-            }
-        } else if file_type.is_char_device() {
-            FileType::CharDevice
-        } else if file_type.is_block_device() {
-            FileType::BlockDevice
-        } else if file_type.is_socket() {
-            FileType::Socket
         } else {
-            FileType::Special
+            FileType::File
         }
     }
 
@@ -72,13 +49,6 @@ impl FileType {
             FileType::Special
         }
     }
-
-    pub fn is_dirlike(self) -> bool {
-        matches!(
-            self,
-            FileType::Directory | FileType::SymLink { is_dir: true }
-        )
-    }
 }
 
 impl FileType {
@@ -92,12 +62,6 @@ impl FileType {
                 },
             ),
             FileType::Directory => colors.colorize('d', &Elem::Dir { uid: false }),
-            FileType::Pipe => colors.colorize('|', &Elem::Pipe),
-            FileType::SymLink { .. } => colors.colorize('l', &Elem::SymLink),
-            FileType::BlockDevice => colors.colorize('b', &Elem::BlockDevice),
-            FileType::CharDevice => colors.colorize('c', &Elem::CharDevice),
-            FileType::Socket => colors.colorize('s', &Elem::Socket),
-            FileType::Special => colors.colorize('?', &Elem::Special),
         }
     }
 }

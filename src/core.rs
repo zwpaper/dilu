@@ -3,7 +3,7 @@ use crate::dal::{Meta, DAL};
 use crate::display;
 use crate::flags::{ColorOption, Display, Flags, HyperlinkOption, Layout, SortOrder, ThemeOption};
 use crate::icon::Icons;
-use crate::{print_error, print_output, sort, ExitCode};
+use crate::{print_output, sort};
 use std::path::PathBuf;
 
 use std;

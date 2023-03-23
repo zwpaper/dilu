@@ -37,32 +37,22 @@ impl Icons {
             Some(t) => {
                 // Check file types
                 let file_type: FileType = name.file_type();
-                let icon = match file_type {
-                    FileType::SymLink { is_dir: true } => &t.filetype.symlink_dir,
-                    FileType::SymLink { is_dir: false } => &t.filetype.symlink_file,
-                    FileType::Socket => &t.filetype.socket,
-                    FileType::Pipe => &t.filetype.pipe,
-                    FileType::CharDevice => &t.filetype.device_char,
-                    FileType::BlockDevice => &t.filetype.device_block,
-                    FileType::Special => &t.filetype.special,
-                    _ => {
-                        if let Some(icon) = t.name.get(name.file_name().to_lowercase().as_str()) {
-                            icon
-                        } else if let Some(icon) = name
-                            .extension()
-                            .and_then(|ext| t.extension.get(ext.to_lowercase().as_str()))
-                        {
-                            icon
-                        } else {
-                            match file_type {
-                                FileType::Directory { .. } => &t.filetype.dir,
-                                // If a file has no extension and is executable, show an icon.
-                                // Except for Windows, it marks everything as an executable.
-                                #[cfg(not(windows))]
-                                FileType::File => &t.filetype.executable,
-                                _ => &t.filetype.file,
-                            }
-                        }
+                let icon = if let Some(icon) = t.name.get(name.file_name().to_lowercase().as_str())
+                {
+                    icon
+                } else if let Some(icon) = name
+                    .extension()
+                    .and_then(|ext| t.extension.get(ext.to_lowercase().as_str()))
+                {
+                    icon
+                } else {
+                    match file_type {
+                        FileType::Directory { .. } => &t.filetype.dir,
+                        // If a file has no extension and is executable, show an icon.
+                        // Except for Windows, it marks everything as an executable.
+                        #[cfg(not(windows))]
+                        FileType::File => &t.filetype.executable,
+                        _ => &t.filetype.file,
                     }
                 };
 
