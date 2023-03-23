@@ -54,114 +54,31 @@ impl<'a> DAL<'a> {
             return Ok(vec![]);
         }
 
-        let mut ds = self.op.list(src.entry.path()).await?;
-        while let Some(mut de) = ds.try_next().await? {
-            let meta = self.op.metadata(&de, Metakey::Mode).await?;
-            match meta.mode() {
-                EntryMode::FILE => {
-                    println!("Handling file")
-                }
-                EntryMode::DIR => {
-                    println!("Handling dir like start a new list via meta.path()")
-                }
-                EntryMode::Unknown => continue,
+        let mut subs: Vec<Meta> = Vec::new();
+        let mut ds = self
+            .op
+            .list(format!("{}/", src.entry.path()).as_str())
+            .await?;
+        while let Some(de) = ds.try_next().await? {
+            let path = Path::new(de.path());
+            let entry = self.from_path(path).await?;
+            let name = path
+                .file_name()
+                .ok_or_else(|| Error::new(ErrorKind::InvalidInput, "invalid file name"))?;
+            if flags.ignore_globs.0.is_match(name) {
+                continue;
             }
-        }
+            // skip files for --tree -d
+            if flags.layout == Layout::Tree
+                && flags.display == Display::DirectoryOnly
+                && entry.file_type() == FileType::Directory
+            {
+                continue;
+            }
 
-        // let entries = match src.path.read_dir() {
-        //     Ok(entries) => entries,
-        //     Err(err) => {
-        //         print_error!("{}: {}.", self.path.display(), err);
-        //         return Ok((None, ExitCode::MinorIssue));
-        //     }
-        // };
-        //
-        // let mut content: Vec<Meta> = Vec::new();
-        //
-        // if matches!(flags.display, Display::All | Display::SystemProtected)
-        //     && flags.layout != Layout::Tree
-        // {
-        //     let mut current_meta = self.clone();
-        //     current_meta.name.name = ".".to_owned();
-        //
-        //     let mut parent_meta =
-        //         Self::from_path(&self.path.join(Component::ParentDir), flags.dereference.0)?;
-        //     parent_meta.name.name = "..".to_owned();
-        //
-        //     content.push(current_meta);
-        //     content.push(parent_meta);
-        // }
-        //
-        // let mut exit_code = ExitCode::OK;
-        //
-        // for entry in entries {
-        //     let entry = entry?;
-        //     let path = entry.path();
-        //
-        //     let name = path
-        //         .file_name()
-        //         .ok_or_else(|| Error::new(ErrorKind::InvalidInput, "invalid file name"))?;
-        //
-        //     if flags.ignore_globs.0.is_match(name) {
-        //         continue;
-        //     }
-        //
-        //     #[cfg(windows)]
-        //     let is_hidden =
-        //         name.to_string_lossy().starts_with('.') || windows_utils::is_path_hidden(&path);
-        //     #[cfg(not(windows))]
-        //     let is_hidden = name.to_string_lossy().starts_with('.');
-        //
-        //     #[cfg(windows)]
-        //     let is_system = windows_utils::is_path_system(&path);
-        //     #[cfg(not(windows))]
-        //     let is_system = false;
-        //
-        //     match flags.display {
-        //         // show hidden files, but ignore system protected files
-        //         Display::All | Display::AlmostAll if is_system => continue,
-        //         // ignore hidden and system protected files
-        //         Display::VisibleOnly if is_hidden || is_system => continue,
-        //         _ => {}
-        //     }
-        //
-        //     let mut entry_meta = match Self::from_path(&path, flags.dereference.0) {
-        //         Ok(res) => res,
-        //         Err(err) => {
-        //             print_error!("{}: {}.", path.display(), err);
-        //             exit_code.set_if_greater(ExitCode::MinorIssue);
-        //             continue;
-        //         }
-        //     };
-        //
-        //     // skip files for --tree -d
-        //     if flags.layout == Layout::Tree
-        //         && flags.display == Display::DirectoryOnly
-        //         && !entry.file_type()?.is_dir()
-        //     {
-        //         continue;
-        //     }
-        //
-        //     // check dereferencing
-        //     if flags.dereference.0 || !matches!(entry_meta.file_type, FileType::SymLink { .. }) {
-        //         match entry_meta.recurse_into(depth - 1, flags) {
-        //             Ok((content, rec_exit_code)) => {
-        //                 entry_meta.content = content;
-        //                 exit_code.set_if_greater(rec_exit_code);
-        //             }
-        //             Err(err) => {
-        //                 print_error!("{}: {}.", path.display(), err);
-        //                 exit_code.set_if_greater(ExitCode::MinorIssue);
-        //                 continue;
-        //             }
-        //         };
-        //     }
-        //
-        //     content.push(entry_meta);
-        // }
-        //
-        // Ok((Some(content), exit_code))
-        Ok(vec![])
+            subs.push(entry);
+        }
+        Ok(subs)
     }
 
     pub fn calculate_total_size(&mut self) {
@@ -236,6 +153,7 @@ impl<'a> DAL<'a> {
         Ok(Meta {
             entry: Entry::new(path.to_str().unwrap()),
             meta: m,
+            sub_metas: vec![],
         })
     }
 }
@@ -243,6 +161,7 @@ impl<'a> DAL<'a> {
 pub struct Meta {
     entry: Entry,
     meta: Metadata,
+    pub sub_metas: Vec<Meta>,
 }
 
 impl Meta {

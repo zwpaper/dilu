@@ -46,7 +46,7 @@ impl Date {
         let locale = current_locale();
 
         if let Date::Date(val) = self {
-            match &flags.date {
+            let date = match &flags.date {
                 DateFlag::Date => val.format_localized("%c", locale).to_string(),
                 DateFlag::Relative => HumanTime::from(*val - Local::now()).to_string(),
                 DateFlag::Iso => {
@@ -59,7 +59,8 @@ impl Date {
                     }
                 }
                 DateFlag::Formatted(format) => val.format_localized(format, locale).to_string(),
-            }
+            };
+            format!("[{}]", date)
         } else {
             String::from('-')
         }

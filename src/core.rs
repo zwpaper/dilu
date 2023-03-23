@@ -1,5 +1,5 @@
 use crate::color::Colors;
-use crate::dal::{DAL, Meta};
+use crate::dal::{Meta, DAL};
 use crate::display;
 use crate::flags::{ColorOption, Display, Flags, HyperlinkOption, Layout, SortOrder, ThemeOption};
 use crate::icon::Icons;
@@ -88,8 +88,7 @@ impl Core {
         Ok(())
     }
 
-    async fn fetch(&self, paths: Vec<PathBuf>) -> Result<Vec<Meta>, Box<dyn std::error::Error>> {
-        let mut exit_code = ExitCode::OK;
+    async fn fetch(&self, paths: Vec<PathBuf>) -> io::Result<Vec<Meta>> {
         let mut meta_list = Vec::with_capacity(paths.len());
         let depth = match self.flags.layout {
             Layout::Tree { .. } => self.flags.recursion.depth,
@@ -97,34 +96,18 @@ impl Core {
             _ => 1,
         };
 
-        let pwd = std::env::current_dir()
-            .unwrap()
-            .clone();
-        let work_dir = pwd
-            .to_str()
-            .unwrap();
+        let pwd = std::env::current_dir().unwrap().clone();
+        let work_dir = pwd.to_str().unwrap();
         for path in paths {
             let dal = DAL::new(work_dir);
             let mut meta = dal.from_path(&path).await?;
 
-            // let recurse =
-            //     self.flags.layout == Layout::Tree || self.flags.display != Display::DirectoryOnly;
-            // if recurse {
-            //     match meta.recurse_into(depth, &self.flags) {
-            //         Ok((content, path_exit_code)) => {
-            //             meta.content = content;
-            //             meta_list.push(meta);
-            //             exit_code.set_if_greater(path_exit_code);
-            //         }
-            //         Err(err) => {
-            //             print_error!("lsd: {}: {}\n", path.display(), err);
-            //             exit_code.set_if_greater(ExitCode::MinorIssue);
-            //             continue;
-            //         }
-            //     };
-            // } else {
-            //     meta_list.push(meta);
-            // };
+            let recurse =
+                self.flags.layout == Layout::Tree || self.flags.display != Display::DirectoryOnly;
+            if recurse {
+                let subs = dal.recurse_into(&meta, depth, &self.flags).await?;
+                meta.sub_metas = subs;
+            }
             meta_list.push(meta);
         }
         // Only calculate the total size of a directory if it will be displayed

@@ -136,28 +136,28 @@ fn inner_display_grid(
 
     let should_display_folder_path = should_display_folder_path(depth, metas, flags);
 
-    // // print the folder content
-    // for meta in metas {
-    //     if let Some(content) = &meta.content {
-    //         if should_display_folder_path {
-    //             output += &display_folder_path(meta);
-    //         }
-    //
-    //         let display_option = DisplayOption::Relative {
-    //             base_path: &meta.path,
-    //         };
-    //
-    //         output += &inner_display_grid(
-    //             &display_option,
-    //             content,
-    //             flags,
-    //             colors,
-    //             icons,
-    //             depth + 1,
-    //             term_width,
-    //         );
-    //     }
-    // }
+    // print the folder content
+    for meta in metas {
+        if FileType::Directory == meta.file_type() {
+            // if should_display_folder_path {
+            //     output += &display_folder_path(meta);
+            // }
+
+            let display_option = DisplayOption::Relative {
+                base_path: &meta.path(),
+            };
+
+            output += &inner_display_grid(
+                &display_option,
+                &meta.sub_metas,
+                flags,
+                colors,
+                icons,
+                depth + 1,
+                term_width,
+            );
+        }
+    }
 
     output
 }

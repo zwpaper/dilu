@@ -18,7 +18,7 @@ impl Blocks {
     /// It contains the [Block]s [Permission](Block::Permission), [User](Block::User),
     /// [Group](Block::Group), [Size](Block::Size), [Date](Block::Date) and [Name](Block::Name).
     fn long() -> Self {
-        Self(vec![Block::Size, Block::Date, Block::Name])
+        Self(vec![Block::Date, Block::Size, Block::Name])
     }
 
     pub fn displays_size(&self) -> bool {
