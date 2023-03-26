@@ -5,7 +5,7 @@ use crate::meta::name::Name;
 use crate::meta::size::Size;
 
 use std::io::{self, Error, ErrorKind};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::time::SystemTime;
 
 use futures::TryStreamExt;
@@ -167,8 +167,14 @@ impl Meta {
         Name::new(Path::new(self.entry.path()), self.file_type())
     }
 
-    pub fn path(&self) -> &Path {
-        Path::new(self.entry.path())
+    pub fn path(&self) -> PathBuf {
+        let path = Path::new(self.entry.path());
+        if path.is_relative() && !path.starts_with(".") {
+            // make sure start with `.` dir
+            Path::new(".").join(path)
+        } else {
+            path.to_path_buf()
+        }
     }
 
     pub fn size(&self) -> Option<Size> {

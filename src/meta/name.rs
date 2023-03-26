@@ -34,9 +34,16 @@ impl Name {
             .extension()
             .map(|ext| ext.to_string_lossy().to_string());
 
+        let path = if path.is_relative() && !path.starts_with(".") {
+            // make sure start with `.` dir
+            Path::new(".").join(path)
+        } else {
+            path.to_path_buf()
+        };
+
         Self {
             name,
-            path: PathBuf::from(path),
+            path,
             extension,
             file_type,
         }
@@ -55,11 +62,6 @@ impl Name {
         // return CurDir(.) directly
         if self.path == base_path {
             return PathBuf::from(AsRef::<Path>::as_ref(&Component::CurDir));
-        }
-
-        // return the file itself directly
-        if self.path == self.path.file_name().unwrap() {
-            return self.path.clone();
         }
 
         let shared_components: PathBuf = self
