@@ -13,7 +13,7 @@ impl FileType {
     const EXECUTABLE_EXTENSIONS: &[&'static str] = &["exe", "msi", "bat", "ps1"];
 
     #[cfg(unix)]
-    pub fn new(meta: &Metadata, symlink_meta: Option<&Metadata>) -> Self {
+    pub fn new(meta: &Metadata) -> Self {
         let file_type = meta.file_type();
 
         if file_type.is_dir() {

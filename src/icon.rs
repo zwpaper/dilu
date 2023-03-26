@@ -52,6 +52,9 @@ impl Icons {
                         // Except for Windows, it marks everything as an executable.
                         #[cfg(not(windows))]
                         FileType::File => &t.filetype.executable,
+
+                        // allow, Windows will reach here
+                        #[allow(unreachable_patterns)]
                         _ => &t.filetype.file,
                     }
                 };

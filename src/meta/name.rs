@@ -185,10 +185,6 @@ impl Name {
                 exec: false,
                 uid: false,
             },
-            _ => Elem::File {
-                exec: false,
-                uid: false,
-            },
         };
 
         colors.colorize_using_path(content, &self.path, &elem)

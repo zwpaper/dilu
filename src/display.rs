@@ -255,7 +255,7 @@ fn inner_display_tree(
     cells
 }
 
-fn should_display_folder_path(depth: usize, metas: &[Meta], flags: &Flags) -> bool {
+fn should_display_folder_path(depth: usize, metas: &[Meta], _flags: &Flags) -> bool {
     if depth > 0 {
         true
     } else {
