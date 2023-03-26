@@ -155,6 +155,7 @@ impl<'a> DAL<'a> {
     }
 }
 
+#[derive(Debug)]
 pub struct Meta {
     entry: Entry,
     meta: Metadata,
