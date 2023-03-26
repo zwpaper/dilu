@@ -134,10 +134,10 @@ fn inner_display_grid(
 
     // print the folder content
     for meta in metas {
-        if FileType::Directory == meta.file_type() {
-            // if should_display_folder_path {
-            //     output += &display_folder_path(meta);
-            // }
+        if meta.sub_metas.len() != 0 {
+            if should_display_folder_path {
+                output += &display_folder_path(meta);
+            }
 
             let display_option = DisplayOption::Relative {
                 base_path: &meta.path(),
