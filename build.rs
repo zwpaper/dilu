@@ -17,7 +17,7 @@ include!("src/app.rs");
 fn main() {
     // rustc version too small or can't figure it out
     if version_check::is_min_version("1.64.0") != Some(true) {
-        eprintln!("'lsd' requires rustc >= 1.64.0");
+        eprintln!("'dilu' requires rustc >= 1.64.0");
         exit(1);
     }
 
@@ -28,7 +28,7 @@ fn main() {
     fs::create_dir_all(&outdir).unwrap();
 
     let mut app = Cli::command();
-    let bin_name = "lsd";
+    let bin_name = "dl";
     generate_to(Bash, &mut app, bin_name, &outdir).expect("Failed to generate Bash completions");
     generate_to(Fish, &mut app, bin_name, &outdir).expect("Failed to generate Fish completions");
     generate_to(Zsh, &mut app, bin_name, &outdir).expect("Failed to generate Zsh completions");

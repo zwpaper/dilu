@@ -16,7 +16,7 @@ use serde::Deserialize;
 use std::fs;
 use std::io;
 
-const CONF_DIR: &str = "lsd";
+const CONF_DIR: &str = "dilu";
 const CONF_FILE_NAME: &str = "config.yaml";
 
 /// A struct to hold an optional configuration items, and provides methods
@@ -211,7 +211,7 @@ color:
   # How to colorize the output.
   # When "classic" is set, this is set to "no-color".
   # Possible values: default, no-color, no-lscolors, <theme-file-name>
-  # when specifying <theme-file-name>, lsd will look up theme file in
+  # when specifying <theme-file-name>, dilu will look up theme file in
   # XDG Base Directory if relative
   # The file path if absolute
   theme: default

@@ -61,7 +61,7 @@ impl ExitCode {
         }
     }
 }
-/// Macro used to avoid panicking when the lsd method is used with a pipe and
+/// Macro used to avoid panicking when is used with a pipe and
 /// stderr close before our program.
 #[macro_export]
 macro_rules! print_error {
@@ -75,7 +75,7 @@ macro_rules! print_error {
                 let mut handle = stderr.lock();
                 // We can write on stderr, so we simply ignore the error and don't print
                 // and stop with success.
-                let res = handle.write_all(std::format!("lsd: {}\n\n",
+                let res = handle.write_all(std::format!("dl: {}\n\n",
                                                         std::format!($($arg)*)).as_bytes());
                 if res.is_err() {
                     std::process::exit(0);
@@ -85,7 +85,7 @@ macro_rules! print_error {
     };
 }
 
-/// Macro used to avoid panicking when the lsd method is used with a pipe and
+/// Macro used to avoid panicking when is used with a pipe and
 /// stdout close before our program.
 #[macro_export]
 macro_rules! print_output {

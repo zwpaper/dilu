@@ -40,7 +40,7 @@ pub struct Cli {
     #[arg(long)]
     pub ignore_config: bool,
 
-    /// Provide a custom lsd configuration file
+    /// Provide a custom configuration file
     #[arg(long, value_name = "PATH")]
     pub config_file: Option<PathBuf>,
 
