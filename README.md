@@ -4,6 +4,8 @@
 
 Dilu is a powerful, colorful, iconic command line tool leveraging the power of [OpenDAL](https://github.com/apache/incubator-opendal), easily access `FileSystem`, `S3`, `HDFS`, `Redis`, etc.
 
+![demo](./images/demo-fs.jpg)
+
 ## Configuration
 
 Dilu can use configuration files to change it's behavior,
