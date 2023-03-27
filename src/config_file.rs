@@ -194,11 +194,8 @@ classic: false
 # layout.
 # Possible values: permission, user, group, context, size, date, name, inode
 blocks:
-  - permission
-  - user
-  - group
-  - size
   - date
+  - size
   - name
 
 # == Color ==
@@ -223,11 +220,6 @@ color:
 # Possible values: date, relative, +<date_format>
 # date: date
 
-# == Dereference ==
-# Whether to dereference symbolic links.
-# Possible values: false, true
-dereference: false
-
 # == Display ==
 # What items to display. Do not specify this for the default behavior.
 # Possible values: all, almost-all, directory-only
@@ -251,11 +243,6 @@ icons:
 # ignore-globs:
 #   - .git
 
-# == Indicators ==
-# Whether to add indicator characters to certain listed files.
-# Possible values: false, true
-indicators: false
-
 # == Layout ==
 # Which layout to use. "oneline" might be a bit confusing here and should be
 # called "one-per-line". It might be changed in the future.
@@ -276,11 +263,6 @@ recursion:
 # Possible values: default, short, bytes
 size: default
 
-# == Permission ==
-# Specify the format of the permission column.
-# Possible value: rwx, octal
-permission: rwx
-
 # == Sorting ==
 sorting:
   # Specify what to sort by.
@@ -294,11 +276,6 @@ sorting:
   # Possible values: first, last, none
   dir-grouping: none
 
-# == No Symlink ==
-# Whether to omit showing symlink targets
-# Possible values: false, true
-no-symlink: false
-
 # == Total size ==
 # Whether to display the total size of directories.
 # Possible values: false, true
@@ -308,10 +285,6 @@ total-size: false
 # Whether to display the total size of directories.
 # Possible values: always, auto, never
 hyperlink: never
-
-# == Symlink arrow ==
-# Specifies how the symlink arrow display, chars in both ascii and utf8
-symlink-arrow: ⇒
 "#;
 
 #[cfg(test)]
