@@ -34,12 +34,7 @@ impl Name {
             .extension()
             .map(|ext| ext.to_string_lossy().to_string());
 
-        let path = if path.is_relative() && !path.starts_with(".") {
-            // make sure start with `.` dir
-            Path::new(".").join(path)
-        } else {
-            path.to_path_buf()
-        };
+        let path = path.to_path_buf();
 
         Self {
             name,
@@ -57,23 +52,26 @@ impl Name {
     }
 
     fn relative_path<T: AsRef<Path> + Clone>(&self, base_path: T) -> PathBuf {
-        let base_path = base_path.as_ref();
-
+        let base = base_path.as_ref();
         // return CurDir(.) directly
-        if self.path == base_path {
+        if self.path == base {
             return PathBuf::from(AsRef::<Path>::as_ref(&Component::CurDir));
         }
+
+        let base = base
+            .strip_prefix("./")
+            .or_else(|_| base.strip_prefix("/"))
+            .unwrap_or(base);
 
         let shared_components: PathBuf = self
             .path
             .components()
-            .zip(base_path.components())
+            .zip(base.components())
             .take_while(|(target_component, base_component)| target_component == base_component)
             .map(|tuple| tuple.0)
             .collect();
 
-        base_path
-            .strip_prefix(&shared_components)
+        base.strip_prefix(&shared_components)
             .unwrap()
             .components()
             .map(|_| Component::ParentDir)

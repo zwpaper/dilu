@@ -140,7 +140,7 @@ fn inner_display_grid(
             }
 
             let display_option = DisplayOption::Relative {
-                base_path: &meta.path(),
+                base_path: &meta.path,
             };
 
             output += &inner_display_grid(
@@ -269,7 +269,7 @@ fn should_display_folder_path(depth: usize, metas: &[Meta], _flags: &Flags) -> b
 }
 
 fn display_folder_path(meta: &Meta) -> String {
-    format!("\n{}:\n", meta.path().to_string_lossy())
+    format!("\n{}:\n", meta.path.to_string_lossy())
 }
 
 fn get_output(

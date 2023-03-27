@@ -11,26 +11,37 @@ use std::time::SystemTime;
 use futures::TryStreamExt;
 
 use opendal::layers::RetryLayer;
-use opendal::Entry;
 use opendal::Operator;
 use opendal::{services, Metadata};
 
-pub struct DAL<'a> {
-    work_dir: &'a str,
-
+pub struct DAL {
     op: Operator,
 }
 
-impl<'a> DAL<'a> {
-    pub fn new(work_dir: &'a str) -> Self {
+impl DAL {
+    pub fn new(work_dir: &Path, path: &Path) -> Self {
+        let wd = if path.is_relative() {
+            work_dir.to_path_buf()
+        } else {
+            Path::new("/").to_path_buf()
+        };
+
         let mut builder = services::Fs::default();
-        builder.root(work_dir);
+        builder.root(wd.to_str().unwrap());
         let op: Operator = Operator::new(builder)
             .unwrap()
             .layer(RetryLayer::new())
             .finish();
 
-        DAL { work_dir, op }
+        DAL { op }
+    }
+
+    pub async fn from_path(&self, path: &Path) -> io::Result<Meta> {
+        Ok(Meta {
+            path: path.to_path_buf(),
+            meta: self.op.stat(path.to_str().unwrap()).await?,
+            sub_metas: vec![],
+        })
     }
 
     pub async fn recurse_into(
@@ -46,18 +57,17 @@ impl<'a> DAL<'a> {
             return Ok(vec![]);
         }
 
-        let meta = self.op.metadata(&src.entry, None).await?;
-        if meta.is_file() {
+        if src.file_type() == FileType::File {
             return Ok(vec![]);
         }
 
         let mut subs: Vec<Meta> = Vec::new();
         let mut ds = self
             .op
-            .list(format!("{}/", src.entry.path()).as_str())
+            .list(format!("{}/", src.path.to_string_lossy()).as_str())
             .await?;
         while let Some(de) = ds.try_next().await? {
-            let path = Path::new(de.path());
+            let path = Path::new(de.path().clone());
             let entry = self.from_path(path).await?;
             let name = path
                 .file_name()
@@ -141,39 +151,18 @@ impl<'a> DAL<'a> {
     //         0
     //     }
     // }
-
-    pub async fn from_path(&self, path: &Path) -> io::Result<Meta> {
-        let mut builder = services::Fs::default();
-        builder.root(self.work_dir);
-        let m = self.op.stat(path.to_str().unwrap()).await?;
-        Ok(Meta {
-            entry: Entry::new(path.to_str().unwrap()),
-            meta: m,
-            sub_metas: vec![],
-        })
-    }
 }
 
 #[derive(Debug)]
 pub struct Meta {
-    entry: Entry,
+    pub path: PathBuf,
     meta: Metadata,
     pub sub_metas: Vec<Meta>,
 }
 
 impl Meta {
     pub fn name(&self) -> Name {
-        Name::new(Path::new(self.entry.path()), self.file_type())
-    }
-
-    pub fn path(&self) -> PathBuf {
-        let path = Path::new(self.entry.path());
-        if path.is_relative() && !path.starts_with(".") {
-            // make sure start with `.` dir
-            Path::new(".").join(path)
-        } else {
-            path.to_path_buf()
-        }
+        Name::new(&self.path, self.file_type())
     }
 
     pub fn size(&self) -> Option<Size> {

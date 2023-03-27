@@ -96,11 +96,11 @@ impl Core {
             _ => 1,
         };
 
-        let pwd = std::env::current_dir().unwrap().clone();
-        let work_dir = pwd.to_str().unwrap();
+        let work_dir = std::env::current_dir().unwrap().clone();
         for path in paths {
-            let dal = DAL::new(work_dir);
-            let mut meta = dal.from_path(&path).await?;
+            let dal = DAL::new(&work_dir, &path);
+            let current = path;
+            let mut meta = dal.from_path(&current).await?;
 
             let recurse =
                 self.flags.layout == Layout::Tree || self.flags.display != Display::DirectoryOnly;
