@@ -2,7 +2,7 @@
 
 [![license](http://img.shields.io/badge/license-Apache%20v2-blue.svg)](https://raw.githubusercontent.com/zwpaper/dilu/master/LICENSE)
 
-Dilu is a powerful, colorful, iconic command line tool leveraging the power of [Apache OpenDAL®](https://github.com/apache/incubator-opendal), easily access `FileSystem`, `S3`, `HDFS`, `Redis`, etc.
+Dilu is a powerful, colorful, iconic command line tool leveraging the power of [Apache OpenDAL™](https://github.com/apache/incubator-opendal), easily access `FileSystem`, `S3`, `HDFS`, `Redis`, etc.
 
 ![demo](./images/demo-fs.jpg)
 
